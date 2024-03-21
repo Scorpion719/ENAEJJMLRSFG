@@ -21,8 +21,17 @@ namespace ENAEJJMLRSFG.Controllers
         }
 
         // GET: User
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(User user)
         {
+            var query = _context.Users.AsQueryable();
+            if (string.IsNullOrWhiteSpace(user.UserName) == false)
+            {
+                query = query.Where(s => s.UserName.Contains(user.UserName));
+            }
+            if (user.Status == 1 || user.Status == 2)
+            {
+                query = query.Where(s => s.Status == user.Status);
+            }
             var eNAEJJMLRSFGContext = _context.Users.Include(u => u.Role);
             return View(await eNAEJJMLRSFGContext.ToListAsync());
         }

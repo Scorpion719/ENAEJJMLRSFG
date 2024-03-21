@@ -10,7 +10,7 @@ namespace ENAEJJMLRSFG.Models
         public ENAEJJMLRSFGContext()
         {
         }
-
+        
         public ENAEJJMLRSFGContext(DbContextOptions<ENAEJJMLRSFGContext> options)
             : base(options)
         {

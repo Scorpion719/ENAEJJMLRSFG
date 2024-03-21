@@ -37,7 +37,7 @@
                 <label asp-for="Image" class="control-label"></label>
                 <input type="file" id="fileImagen" asp-for="Image" class="form-control" onchange="validarTamaño()" />
                 <span asp-validation-for="Image" class="text-danger"></span>
-                <img id="imagenPrevia" src="@(Model.Image  )" alt="Vista previa de la imagen" style="max-width: 200px; max-height: 200px;" />
+                <img id="imagenPrevia" src="@(Model.Image)" alt="Vista previa de la imagen" style="max-width: 200px; max-height: 200px;" />
             </div>
             <div class="form-group">
                 <label asp-for="RoleId" class="control-label"></label>
@@ -53,6 +53,10 @@
 
 <div>
     <a asp-action="Index">Back to List</a>
+</div>
+
+<div>
+    <img id="imagenPrevia" src="~/images/user.png" alt="Vista previa de la imagen" style="max-width: 200px; max-height: 200px;">
 </div>
 
 @section Scripts {
@@ -81,11 +85,14 @@
             if (archivo && archivo.size > maxSizeInBytes) {
                 alert('El tamaño del archivo excede el límite permitido (1 MB).');
                 archivoInput.value = ''; // Limpiar el valor del input de archivos
-                document.getElementById('imagenPrevia').src = '@(Model.Image )'; // Restaurar la imagen predeterminada
+                document.getElementById('imagenPrevia').src = '@(Model.Image)'; // Restaurar la imagen predeterminada
             } else {
                 // Si el archivo es válido, mostrar la vista previa
                 mostrarVistaPrevia();
             }
         }
+
+        // Llamar a la función para mostrar la vista previa al cargar la página
+        mostrarVistaPrevia();
     </script>
 }

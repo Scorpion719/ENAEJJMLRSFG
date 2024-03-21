@@ -35,6 +35,8 @@ namespace ENAEJJMLRSFG.Controllers
             }
 
             var customer = await _context.Customers
+                //este es para que se muestre en la vista detalles
+                .Include(s => s.Addresses)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (customer == null)
             {
@@ -64,15 +66,43 @@ namespace ENAEJJMLRSFG.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Email,Phone")] Customer customer)
+        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Email,Phone,Addresses")] Customer customer)
         {
-            if (ModelState.IsValid)
+            _context.Add(customer);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
+           // return View(customer);
+        }
+
+        //metodo agregar detalles
+
+        [HttpPost]
+        public IActionResult AgregarDetalles([Bind("Id,FirstName,LastName,Email,Phone,Addresses")] Customer customer, string accion)
+        {
+            customer.Addresses.Add(new Address { Street = "" });
+            ViewBag.Accion = accion;
+            //esto de aca abajo es fundamental (Accion), para editar
+            return View(accion, customer); // Redirecciona a la vista Create después de agregar los detalles
+        }
+
+        //Metodo Eliminar detalles
+        public IActionResult EliminarDetalles([Bind("Id,FirstName,LastName,Email,Phone,Addresses")] Customer customer, int index, string accion)
+        {
             {
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var det = customer.Addresses[index];
+                if (accion == "Edit" && det.Id > 0)
+                {
+                    det.Id = det.Id * -1;
+                }
+                else
+                {
+                    customer.Addresses.RemoveAt(index);
+                }
+
+                ViewBag.Accion = accion;
+                return View(accion, customer);
             }
-            return View(customer);
         }
 
         // GET: Customers/Edit/5

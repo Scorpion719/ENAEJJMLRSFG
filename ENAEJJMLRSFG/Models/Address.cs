@@ -6,7 +6,7 @@ namespace ENAEJJMLRSFG.Models
 {
     public partial class Address
     {
-        // hola
+        
         public int Id { get; set; }
 
         [Display(Name = "Cliente")]

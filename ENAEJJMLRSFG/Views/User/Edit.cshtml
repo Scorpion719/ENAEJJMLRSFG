@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -35,8 +35,9 @@
             </div>
             <div class="form-group">
                 <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-control" />
+                <input type="file" id="fileImagen" asp-for="Image" class="form-control" onchange="validarTamaño()" />
                 <span asp-validation-for="Image" class="text-danger"></span>
+                <img id="imagenPrevia" src="@(Model.Image  )" alt="Vista previa de la imagen" style="max-width: 200px; max-height: 200px;" />
             </div>
             <div class="form-group">
                 <label asp-for="RoleId" class="control-label"></label>
@@ -55,5 +56,36 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function mostrarVistaPrevia() {
+            var input = document.getElementById('fileImagen');
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    document.getElementById('imagenPrevia').src = e.target.result;
+                }
+
+                reader.readAsDataURL(input.files[0]); // Convierte el archivo a una URL base64
+            }
+        }
+
+        function validarTamaño() {
+            var archivoInput = document.getElementById('fileImagen');
+            var archivo = archivoInput.files[0];
+            var maxSizeInBytes = 1000000; // 1 MB
+
+            if (archivo && archivo.size > maxSizeInBytes) {
+                alert('El tamaño del archivo excede el límite permitido (1 MB).');
+                archivoInput.value = ''; // Limpiar el valor del input de archivos
+                document.getElementById('imagenPrevia').src = '@(Model.Image )'; // Restaurar la imagen predeterminada
+            } else {
+                // Si el archivo es válido, mostrar la vista previa
+                mostrarVistaPrevia();
+            }
+        }
+    </script>
 }

@@ -100,35 +100,59 @@ namespace ENAEJJMLRSFG.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserName,Password,Email,Status,Image,RoleId")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserName,Password,Email,Status,RoleId")] User user,IFormFile image)
         {
             if (id != user.Id)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            if (image != null && image.Length > 0)
             {
-                try
+                using (var memoryStream = new MemoryStream())
                 {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
+                    await image.CopyToAsync(memoryStream);
+                    user.Image = memoryStream.ToArray();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserExists(user.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(user);
+                await _context.SaveChangesAsync();
             }
-            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id", user.RoleId);
-            return View(user);
+            else
+            {
+                var producFind = await _context.Users.FirstOrDefaultAsync(s => s.Id == user.Id);
+                if (producFind?.Image?.Length > 0)
+                    user.Image = producFind.Image;
+                producFind.UserName = user.UserName;
+                producFind.Password = user.Password;
+                producFind.Email = user.Email;
+                producFind.Status = user.Status;
+                producFind.RoleId = user.RoleId;
+                _context.Update(producFind);
+                await _context.SaveChangesAsync();
+            }
+            try
+            {
+               
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(user.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
+
+            //if (ModelState.IsValid)
+            //{
+
+            //}
+            //ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id", user.RoleId);
+            //return View(user);
         }
 
         // GET: User/Delete/5

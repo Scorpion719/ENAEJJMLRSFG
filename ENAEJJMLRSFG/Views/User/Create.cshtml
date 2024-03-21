@@ -18,7 +18,7 @@
         </div>
         <div class="form-group col-md-5">
             <label asp-for="Password" class="control-label"></label>
-            <input asp-for="Password" class="form-control" />
+            <input asp-for="Password" class="form-control" type="password"/>
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
     </div>
@@ -29,6 +29,14 @@
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
         <div class="form-group col-md-5">
+            <div class="form-group col-md-3">
+                <label asp-for="Status" class="control-label"></label>
+                <select asp-for="Status" class="form-control">
+                    <option value="1">Activo</option>
+                    <option value="2">Inactivo</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
             <label asp-for="RoleId" class="control-label"></label>
             <select asp-for="RoleId" class="form-control" asp-items="ViewBag.RoleId"></select>
         </div>
@@ -56,6 +64,8 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
+        var defaultImageSrc = '@Url.Content("~/images/user.png")';
+
         function mostrarVistaPrevia() {
             var input = document.getElementById('fileImagen');
             if (input.files && input.files[0]) {
@@ -77,11 +87,12 @@
             if (archivo && archivo.size > maxSizeInBytes) {
                 alert('El tamaño del archivo excede el límite permitido (1 MB).');
                 archivoInput.value = ''; // Limpiar el valor del input de archivos
-                document.getElementById('imagenPrevia').src = '~/images/default.jpg'; // Restaurar la imagen predeterminada
+                document.getElementById('imagenPrevia').src = defaultImageSrc; // Restaurar la imagen predeterminada
             } else {
                 // Si el archivo es válido, mostrar la vista previa
                 mostrarVistaPrevia();
             }
         }
     </script>
+
 }

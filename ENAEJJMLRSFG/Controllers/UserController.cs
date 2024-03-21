@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ENAEJJMLRSFG.Models;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ENAEJJMLRSFG.Controllers
 {
@@ -58,6 +60,7 @@ namespace ENAEJJMLRSFG.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,UserName,Password,Email,Status,RoleId")] User user,IFormFile image)
         {
+
             if (image != null && image.Length > 0)
             {
                 using (var memoryStream = new MemoryStream())
@@ -67,6 +70,7 @@ namespace ENAEJJMLRSFG.Controllers
 
                 }
             }
+            user.Password = CalcularHashMD5(user.Password);
             _context.Add(user);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -196,6 +200,26 @@ namespace ENAEJJMLRSFG.Controllers
         private bool UserExists(int id)
         {
           return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        private string CalcularHashMD5(string texto)
+        {
+            using (MD5 md5 = MD5.Create())
+            {
+                // Convierte la cadena de texto a bytes
+                byte[] inputBytes = Encoding.UTF8.GetBytes(texto);
+
+                // Calcula el hash MD5 de los bytes
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                // Convierte el hash a una cadena hexadecimal
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("x2"));
+                }
+
+                return sb.ToString();
+            }
         }
     }
 }

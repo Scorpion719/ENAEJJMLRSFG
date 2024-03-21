@@ -113,7 +113,10 @@ namespace ENAEJJMLRSFG.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _context.Customers
+                //este es para que se muestre en la vista detalles
+                .Include(s => s.Addresses)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (customer == null)
             {
                 return NotFound();

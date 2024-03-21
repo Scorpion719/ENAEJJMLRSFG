@@ -18,7 +18,7 @@ namespace ENAEJJMLRSFG.Models
         public string State { get; set; } = null!;
         [Display(Name = "País")]
         public string Country { get; set; } = null!;
-        
+        [Display(Name = "Código postal")]
         public string? PostalCode { get; set; }
 
         public virtual Customer Customer { get; set; } = null!;

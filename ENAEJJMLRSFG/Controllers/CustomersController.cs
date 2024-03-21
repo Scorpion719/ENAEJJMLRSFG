@@ -47,7 +47,16 @@ namespace ENAEJJMLRSFG.Controllers
         // GET: Customers/Create
         public IActionResult Create()
         {
-            return View();
+            var empleado = new Customer();
+           
+            empleado.Addresses = new List<Address>();
+            empleado.Addresses.Add(new Address
+            {
+
+            });
+            ViewBag.Accion = "Create";
+            return View(empleado);
+          
         }
 
         // POST: Customers/Create

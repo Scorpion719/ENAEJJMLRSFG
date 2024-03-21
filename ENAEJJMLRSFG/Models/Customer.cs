@@ -7,7 +7,7 @@ namespace ENAEJJMLRSFG.Models
     {
         public Customer()
         {
-            Addresses = new HashSet<Address>();
+            Addresses = new List<Address>();
         }
 
         public int Id { get; set; }
@@ -16,6 +16,6 @@ namespace ENAEJJMLRSFG.Models
         public string? Email { get; set; }
         public string? Phone { get; set; }
 
-        public virtual ICollection<Address> Addresses { get; set; }
+        public virtual List<Address> Addresses { get; set; }
     }
 }

@@ -56,16 +56,26 @@ namespace ENAEJJMLRSFG.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserName,Password,Email,Status,Image,RoleId")] User user)
+        public async Task<IActionResult> Create([Bind("Id,UserName,Password,Email,Status,RoleId")] User user,IFormFile image)
         {
-            if (ModelState.IsValid)
+            if (image != null && image.Length > 0)
             {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                using (var memoryStream = new MemoryStream())
+                {
+                    await image.CopyToAsync(memoryStream);
+                    user.Image = memoryStream.ToArray();
+
+                }
             }
-            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id", user.RoleId);
-            return View(user);
+            _context.Add(user);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+            //if (ModelState.IsValid)
+            //{
+
+            //}
+            //ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Id", user.RoleId);
+            //return View(user);
         }
 
         // GET: User/Edit/5

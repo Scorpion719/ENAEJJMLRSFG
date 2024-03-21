@@ -42,7 +42,14 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Status)
+                    @if (item.Status == 1)
+                    {
+                        <span>Activo</span>
+                    }
+                    else
+                    {
+                        <span>Inactivo</span>
+                    }
             </td>
             <td>
                     @if(item.Image != null && item.Image.Length > 0)

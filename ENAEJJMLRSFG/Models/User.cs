@@ -8,10 +8,14 @@ namespace ENAEJJMLRSFG.Models
     {
         public int Id { get; set; }
         [Display(Name = "Nombre de usuario")]
+        [StringLength(50
+            )]
         public string UserName { get; set; } = null!;
         [Display(Name = "Contraseña")]
+        [StringLength(32, MinimumLength = 6, ErrorMessage = "La contraseña debe tener entre 6 y 100 caracteres.")]
         public string Password { get; set; } = null!;
         [Display(Name = "Correo electrónico")]
+        [DataType(DataType.EmailAddress)]
         public string Email { get; set; } = null!;
         [Display(Name = "Estado")]
         public byte Status { get; set; }

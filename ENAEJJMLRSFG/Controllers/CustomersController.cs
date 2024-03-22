@@ -42,23 +42,32 @@ namespace ENAEJJMLRSFG.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.Accion = "Details";
             return View(customer);
         }
 
         // GET: Customers/Create
         public IActionResult Create()
         {
-            var empleado = new Customer();
-           
-            empleado.Addresses = new List<Address>();
-            empleado.Addresses.Add(new Address
+            var customer = new Customer();
+
+            customer.Addresses = new List<Address>();
+            customer.Addresses.Add(new Address
             {
 
             });
             ViewBag.Accion = "Create";
-            return View(empleado);
-          
+            return View(customer);
+            //var customer = new Customer();
+
+            //customer.Addresses = new List<Address>();
+            //customer.Addresses.Add(new Address
+            //{
+
+            //});
+            //ViewBag.Accion = "Create";
+            //return View(customer);
+
         }
 
         // POST: Customers/Create
@@ -72,7 +81,7 @@ namespace ENAEJJMLRSFG.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
-           // return View(customer);
+           //return View(customer);
         }
 
         //metodo agregar detalles
@@ -116,11 +125,12 @@ namespace ENAEJJMLRSFG.Controllers
             var customer = await _context.Customers
                 //este es para que se muestre en la vista detalles
                 .Include(s => s.Addresses)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstAsync(m => m.Id == id);
             if (customer == null)
             {
                 return NotFound();
             }
+            ViewBag.Accion = "Edit";
             return View(customer);
         }
 
@@ -129,34 +139,65 @@ namespace ENAEJJMLRSFG.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Email,Phone")] Customer customer)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Email,Phone,Addresses")] Customer customer)
         {
-            if (id != customer.Id)
+            try
             {
-                return NotFound();
+                // Obtener los datos de la base de datos que van a ser modificados
+                var facturaUpdate = await _context.Customers
+                        .Include(s => s.Addresses)
+                        .FirstAsync(s => s.Id == customer.Id);
+                facturaUpdate.FirstName = customer.FirstName;
+                facturaUpdate.LastName = customer.LastName; /*.Where(s => s.Id > -1).Sum(s => s.PrecioUnitario * s.Cantidad);*/
+                facturaUpdate.Email = customer.Email;
+                facturaUpdate.Phone = customer.Phone;
+                // Obtener todos los detalles que seran nuevos y agregarlos a la base de datos
+                var detNew = customer.Addresses.Where(s => s.Id == 0);
+                foreach (var d in detNew)
+                {
+                    facturaUpdate.Addresses.Add(d);
+                }
+                // Obtener todos los detalles que seran modificados y actualizar a la base de datos
+                var detUpdate = customer.Addresses.Where(s => s.Id > 0);
+                foreach (var d in detUpdate)
+                {
+                    var det = facturaUpdate.Addresses.FirstOrDefault(s => s.Id == d.Id);
+                    det.Street = d.Street;
+                    det.City = d.City;
+                    det.State = d.State;
+                    det.Country = d.Country;
+                    det.PostalCode = d.PostalCode;
+                }
+                // Obtener todos los detalles que seran eliminados y actualizar a la base de datos
+                var delDet = customer.Addresses.Where(s => s.Id < 0).ToList();
+                if (delDet != null && delDet.Count > 0)
+                {
+                    foreach (var d in delDet)
+                    {
+                        d.Id = d.Id * -1;
+                        var det = facturaUpdate.Addresses.FirstOrDefault(s => s.Id == d.Id);
+                        _context.Remove(det);
+                        // facturaUpdate.DetFacturaVenta.Remove(det);
+                    }
+                }
+                // Aplicar esos cambios a la base de datos
+                _context.Update(facturaUpdate);
+                await _context.SaveChangesAsync();
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CustomerExists(customer.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+             
+            }
+            return RedirectToAction(nameof(Index));
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(customer);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CustomerExists(customer.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(customer);
         }
 
         // GET: Customers/Delete/5
@@ -168,12 +209,15 @@ namespace ENAEJJMLRSFG.Controllers
             }
 
             var customer = await _context.Customers
+                //este es para que se muestre en la vista detalles
+                .Include(s => s.Addresses)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (customer == null)
             {
                 return NotFound();
             }
 
+            ViewBag.Accion = "Delete";
             return View(customer);
         }
 

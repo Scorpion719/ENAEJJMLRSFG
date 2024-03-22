@@ -36,6 +36,11 @@
             @Html.DisplayFor(model => model.Phone)
         </dd>
     </dl>
+
+
+    <div class="row row-cols-md-12">
+        @await Html.PartialAsync("_DetAddress", Model.Addresses)
+    </div>
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />

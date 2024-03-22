@@ -1,4 +1,5 @@
 using ENAEJJMLRSFG.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ENAEJJMLRSFGContext>(options =>
-      options.UseSqlServer(builder.Configuration.GetConnectionString("Cnn")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Cnn")));
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+{
+    options.LoginPath = new PathString("/User/login");
+    options.AccessDeniedPath = new PathString("/Home/AccessDenied"); // Cambia esta ruta a la adecuada
+    options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    options.SlidingExpiration = true;
+});
 
 var app = builder.Build();
 
@@ -23,11 +32,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=User}/{action=Index}/{id?}");
 
 app.Run();

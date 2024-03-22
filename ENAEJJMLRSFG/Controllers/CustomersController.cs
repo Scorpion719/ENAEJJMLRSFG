@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ENAEJJMLRSFG.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ENAEJJMLRSFG.Controllers
 {
+    [Authorize]
     public class CustomersController : Controller
     {
         private readonly ENAEJJMLRSFGContext _context;

@@ -14,19 +14,19 @@
     <div class="row">
         <div class="form-group col-md-5">
             <label asp-for="UserName" class="control-label"></label>
-            <input asp-for="UserName" class="form-control" />
+            <input maxlength="50" asp-for="UserName" class="form-control" />
             <span asp-validation-for="UserName" class="text-danger"></span>
         </div>
         <div class="form-group col-md-5">
             <label asp-for="Password" class="control-label"></label>
-            <input asp-for="Password" class="form-control" />
+            <input maxlength="32" asp-for="Password" class="form-control" />
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
     </div>
     <div class="row">
         <div class="form-group col-md-4">
             <label asp-for="Email" class="control-label"></label>
-            <input asp-for="Email" class="form-control" />
+            <input maxlength="100" asp-for="Email" class="form-control" />
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
         <div class="form-group col-md-3">

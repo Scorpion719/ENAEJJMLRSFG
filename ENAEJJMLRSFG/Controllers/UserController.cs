@@ -29,18 +29,25 @@ namespace ENAEJJMLRSFG.Controllers
         public async Task<IActionResult> Index(User user)
         {
             var query = _context.Users.AsQueryable();
-            if (string.IsNullOrWhiteSpace(user.UserName) == false)
+
+            // Aplicar filtros si se proporcionan
+            if (!string.IsNullOrWhiteSpace(user.UserName))
             {
                 query = query.Where(s => s.UserName.Contains(user.UserName));
             }
+
             if (user.Status == 1 || user.Status == 2)
             {
                 query = query.Where(s => s.Status == user.Status);
             }
+
+            // Asegurar que siempre haya un valor para Take
             if (user.Take == 0)
                 user.Take = 10;
-            query = query.Take(user.Take);
-            var eNAEJJMLRSFGContext = _context.Users.Include(u => u.Role);
+
+            // Incluir la relación con el rol en la consulta principal
+            query = query.Include(u => u.Role).Take(user.Take);
+
             return View(await query.ToListAsync());
         }
 

@@ -4,101 +4,182 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e6f7ff; /* Color celeste más claro */
+            color: #333;
+            margin-top: 50px;
+        }
 
-<h4>User</h4>
-<hr />
-<form asp-action="Edit" method="post" enctype="multipart/form-data">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input type="hidden" asp-for="Id" />
-    <div class="row">
-        <div class="form-group col-md-5">
-            <label asp-for="UserName" class="control-label"></label>
-            <input maxlength="50" asp-for="UserName" class="form-control" />
-            <span asp-validation-for="UserName" class="text-danger"></span>
-        </div>
-        <div class="form-group col-md-5">
-            <label asp-for="Password" class="control-label"></label>
-            <input maxlength="32" asp-for="Password" class="form-control" />
-            <span asp-validation-for="Password" class="text-danger"></span>
+        h1 {
+            color: #0056b3; /* Azul oscuro */
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h4 {
+            color: #0056b3; /* Azul oscuro */
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .row {
+            margin-bottom: 20px;
+        }
+
+        .btn-edit {
+            background-color: #0056b3; /* Azul oscuro */
+            border-color: #0056b3;
+            color: #fff;
+        }
+
+            .btn-edit:hover {
+                background-color: #003366; /* Azul marino */
+                border-color: #003366;
+            }
+
+        .btn-back {
+            background-color: #ff6600; /* Naranja */
+            border-color: #ff6600;
+            color: #fff;
+        }
+
+            .btn-back:hover {
+                background-color: #cc5200; /* Naranja más oscuro */
+                border-color: #cc5200;
+            }
+
+        .details-label {
+            font-weight: bold;
+            color: #0056b3; /* Azul oscuro */
+        }
+
+        .details-value {
+            color: #333;
+        }
+
+        .user-image {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit User</h1>
+
+        <div>
+            <h4>User Details</h4>
+            <hr />
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label asp-for="UserName" class="control-label details-label">Username</label>
+                        <input asp-for="UserName" class="form-control" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label asp-for="Password" class="control-label details-label">Password</label>
+                        <input asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label asp-for="Email" class="control-label details-label">Email</label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label asp-for="Status" class="control-label details-label">Status</label>
+                        <select asp-for="Status" class="form-control">
+                            <option value="1">Active</option>
+                            <option value="2">Inactive</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label asp-for="RoleId" class="control-label details-label">Role</label>
+                        <select asp-for="RoleId" class="form-control" asp-items="ViewBag.RoleId"></select>
+                        <span asp-validation-for="RoleId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label asp-for="Image" class="control-label details-label">Profile Picture</label>
+                        <input type="file" id="fileImagen" asp-for="Image" class="form-control" onchange="validarTamaño()" />
+                        <span asp-validation-for="Image" class="text-danger"></span>
+                        <div>
+                            <img id="imagenPrevia" src="@(Model.Image)" alt="Preview" style="max-width: 200px; max-height: 200px;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-primary btn-edit" /> |
+                        <a asp-action="Index" class="btn btn-secondary btn-back">Back to List</a>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
-    <div class="row">
-        <div class="form-group col-md-4">
-            <label asp-for="Email" class="control-label"></label>
-            <input maxlength="100" asp-for="Email" class="form-control" />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
-        <div class="form-group col-md-3">
-            <div class="form-group col-md-3">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control">
-                    <option value="1">Activo</option>
-                    <option value="2">Inactivo</option>
-                </select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group col-md-3">
-            <label asp-for="RoleId" class="control-label"></label>
-            <select asp-for="RoleId" class="form-control" asp-items="ViewBag.RoleId"></select>
-            <span asp-validation-for="RoleId" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="row">
-        <div class="form-group col-md-10">
-            <label asp-for="Image" class="control-label"></label>
-            <input type="file" id="fileImagen" asp-for="Image" class="form-control" onchange="validarTamaño()" />
-            <span asp-validation-for="Image" class="text-danger"></span>
-            <div>
-                <img id="imagenPrevia" src="~/images/user.png" alt="Vista previa de la imagen" style="max-width: 200px; max-height: 200px;">
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="form-group">
-            <input type="submit" value="Save" class="btn btn-primary" />|
-            <a asp-action="Index">Back to List</a>
-        </div>
-    </div>
 
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+        <script>
+            function mostrarVistaPrevia() {
+                var input = document.getElementById('fileImagen');
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
 
-</form>
+                    reader.onload = function (e) {
+                        document.getElementById('imagenPrevia').src = e.target.result;
+                    }
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    <script>
-        function mostrarVistaPrevia() {
-            var input = document.getElementById('fileImagen');
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function (e) {
-                    document.getElementById('imagenPrevia').src = e.target.result;
+                    reader.readAsDataURL(input.files[0]); // Convierte el archivo a una URL base64
                 }
-
-                reader.readAsDataURL(input.files[0]); // Convierte el archivo a una URL base64
             }
-        }
 
-        function validarTamaño() {
-            var archivoInput = document.getElementById('fileImagen');
-            var archivo = archivoInput.files[0];
-            var maxSizeInBytes = 1000000; // 1 MB
+            function validarTamaño() {
+                var archivoInput = document.getElementById('fileImagen');
+                var archivo = archivoInput.files[0];
+                var maxSizeInBytes = 1000000; // 1 MB
 
-            if (archivo && archivo.size > maxSizeInBytes) {
-                alert('El tamaño del archivo excede el límite permitido (1 MB).');
-                archivoInput.value = ''; // Limpiar el valor del input de archivos
-                document.getElementById('imagenPrevia').src = '@(Model.Image)'; // Restaurar la imagen predeterminada
-            } else {
-                // Si el archivo es válido, mostrar la vista previa
-                mostrarVistaPrevia();
+                if (archivo && archivo.size > maxSizeInBytes) {
+                    alert('File size exceeds the allowed limit (1 MB).');
+                    archivoInput.value = ''; // Clear the file input value
+                    document.getElementById('imagenPrevia').src = '@(Model.Image)'; // Restore the default image
+                } else {
+                    // If the file is valid, show the preview
+                    mostrarVistaPrevia();
+                }
             }
-        }
 
-        // Llamar a la función para mostrar la vista previa al cargar la página
-        mostrarVistaPrevia();
-    </script>
-}
+            // Call the function to show the preview when the page loads
+            mostrarVistaPrevia();
+        </script>
+    }
+</body>
+</html>

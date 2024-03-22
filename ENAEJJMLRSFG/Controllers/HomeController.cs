@@ -19,7 +19,7 @@ namespace ENAEJJMLRSFG.Controllers
         {
             return View();
         }
-
+        [AllowAnonymous]
         public IActionResult Privacy()
         {
             return View();

@@ -33,7 +33,7 @@ namespace ENAEJJMLRSFG.Controllers
                 query = query.Where(s => s.Status == user.Status);
             }
             var eNAEJJMLRSFGContext = _context.Users.Include(u => u.Role);
-            return View(await eNAEJJMLRSFGContext.ToListAsync());
+            return View(await query.ToListAsync());
         }
 
         // GET: User/Details/5

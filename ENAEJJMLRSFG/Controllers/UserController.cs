@@ -8,9 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using ENAEJJMLRSFG.Models;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ENAEJJMLRSFG.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         private readonly ENAEJJMLRSFGContext _context;
@@ -58,6 +63,42 @@ namespace ENAEJJMLRSFG.Controllers
             return View(user);
         }
 
+        // GET: User/Login
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(string ReturnUrl)
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            ViewBag.ReturnUrl = ReturnUrl;
+            return View();
+        }
+        // POST: User/Login
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> Login([Bind("Email,Password")] User user, string ReturnUrl)
+        {
+            user.Password = CalcularHashMD5(user.Password);
+            var usuarioAut = await _context.Users.FirstOrDefaultAsync(s => s.Email == user.Email && s.Password == user.Password && s.Status == 1);
+            if (usuarioAut?.Id > 0 && usuarioAut.Email == user.Email)
+            {
+                var claims = new[] {
+                    new Claim(ClaimTypes.Name, usuarioAut.Email),
+                     //new Claim(ClaimTypes.Role, usuarioAut.Rol),
+                    new Claim("Id", usuarioAut.Id.ToString())
+                    };
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), new AuthenticationProperties { IsPersistent = true }); ;
+                var result = User.Identity.IsAuthenticated;
+                if (!string.IsNullOrWhiteSpace(ReturnUrl))
+                    return Redirect(ReturnUrl);
+                else
+                    return RedirectToAction("Index", "Home");
+            }
+            else
+                ViewBag.Error = "Credenciales incorrectas";
+            ViewBag.pReturnUrl = ReturnUrl;
+            return View(user);
+
+        }
         // GET: User/Create
         public IActionResult Create()
         {

@@ -32,6 +32,9 @@ namespace ENAEJJMLRSFG.Controllers
             {
                 query = query.Where(s => s.Status == user.Status);
             }
+            if (user.Take == 0)
+                user.Take = 10;
+            query = query.Take(user.Take);
             var eNAEJJMLRSFGContext = _context.Users.Include(u => u.Role);
             return View(await query.ToListAsync());
         }

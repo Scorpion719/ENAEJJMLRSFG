@@ -97,6 +97,7 @@ namespace ENAEJJMLRSFG.Controllers
             return View(accion, customer); // Redirecciona a la vista Create después de agregar los detalles
         }
 
+
         //Metodo Eliminar detalles
         public IActionResult EliminarDetalles([Bind("Id,FirstName,LastName,Email,Phone,Addresses")] Customer customer, int index, string accion)
         {
@@ -116,7 +117,7 @@ namespace ENAEJJMLRSFG.Controllers
             }
         }
 
-        // GET: Customers/Edit/5
+        // GET: Empleadoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Customers == null)
@@ -125,9 +126,9 @@ namespace ENAEJJMLRSFG.Controllers
             }
 
             var customer = await _context.Customers
-                //este es para que se muestre en la vista detalles
-                .Include(s => s.Addresses)
-                .FirstAsync(m => m.Id == id);
+                 .Include(s => s.Addresses)
+                .FirstAsync(s => s.Id == id);
+
             if (customer == null)
             {
                 return NotFound();
@@ -136,7 +137,7 @@ namespace ENAEJJMLRSFG.Controllers
             return View(customer);
         }
 
-        // POST: Customers/Edit/5
+        // POST: Empleadoes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -196,11 +197,13 @@ namespace ENAEJJMLRSFG.Controllers
                 {
                     throw;
                 }
-             
+
             }
             return RedirectToAction(nameof(Index));
 
         }
+
+
 
         // GET: Customers/Delete/5
         public async Task<IActionResult> Delete(int? id)
